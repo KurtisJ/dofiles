@@ -89,8 +89,8 @@ vim.opt.redrawtime = 10000                           -- increase neovim redraw t
 vim.opt.maxmempattern = 20000                        -- increase max memory
 
 
-vim.api.nvim_set_hl(0, "NormalFloat", { bg = "#16161e" })
-vim.api.nvim_set_hl(0, "FloatBorder", { fg = "#7aa2f7", bg = "#16161e" })
+vim.api.nvim_set_hl(0, "NormalFloat", { bg = "#313244" })
+vim.api.nvim_set_hl(0, "FloatBorder", { fg = "#89b4fa", bg = "#313244" })
 
 -- Makes directory names pop in Oil
 vim.api.nvim_set_hl(0, "OilDir", { fg = "#7aa2f7", bold = true })
@@ -104,36 +104,34 @@ vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "CursorHoldI", "FocusGai
 })
 
 -- Add this to your gemini_custom.lua or your keymap file
-local gemini = require("kurtis.gemini_custom")
+local ai = require("kurtis.ai_assist")
 
--- Trigger a suggestion manually (or you could bind this to InsertCharPre for auto)
-vim.keymap.set("i", "<C-g>", gemini.get_completion, { desc = "Gemini: Suggest Code" })
+-- Toggle Windows
+vim.keymap.set('n', '<leader>gg', function() ai.toggle('gemini') end)
+vim.keymap.set('n', '<leader>cc', function() ai.toggle('claude') end)
+vim.keymap.set('n', '<leader>xx', function() ai.toggle('codex') end)
+-- These intercept the keys before they reach the CLI prompt
+vim.keymap.set('t', '<leader>gg', function() ai.terminal_toggle('gemini') end)
+vim.keymap.set('t', '<leader>cc', function() ai.terminal_toggle('claude') end)
+vim.keymap.set('t', '<leader>xx', function() ai.terminal_toggle('codex') end)
+-- Send Selection/File
+vim.keymap.set({'n', 'v'}, '<leader>sg', function() ai.send_to('gemini') end)
+vim.keymap.set({'n', 'v'}, '<leader>sc', function() ai.send_to('claude') end)
+vim.keymap.set({'n', 'v'}, '<leader>sx', function() ai.send_to('codex') end)
 
--- Accept the "Ghost Text" with Tab
-vim.keymap.set("i", "<Tab>", function()
-  if suggestion ~= "" then
-    gemini.accept_completion()
-  else
-    -- Fallback to normal tab behavior
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, false, true), "n", false)
-  end
-end, { expr = true })
+-- Insert AI Comments (Normal Mode)
+vim.keymap.set('n', '<leader>ic', function() ai.insert_ai_comment('claude') end, { desc = "Insert Claude Comment" })
+vim.keymap.set('n', '<leader>ig', function() ai.insert_ai_comment('gemini') end, { desc = "Insert Gemini Comment" })
+vim.keymap.set('n', '<leader>ix', function() ai.insert_ai_comment('codex') end,  { desc = "Insert Codex Comment" })
 
--- Toggle from Normal mode
-vim.keymap.set("n", "<leader>gg", gemini.toggle_gemini)
-
--- Toggle from TERMINAL mode (Allows closing the window while typing)
-vim.keymap.set("t", "<leader>gg", [[<C-\><C-n><cmd>lua require('kurtis.gemini_custom').toggle_gemini()<CR>]])
-
--- Normal Mode: Sends @path/to/file
-vim.keymap.set("n", "<leader>gs", gemini.send_to_gemini, { desc = "Gemini: Reference File" })
-
--- Visual Mode: Sends @path/to/file + line range
-vim.keymap.set("v", "<leader>gs", gemini.send_to_gemini, { desc = "Gemini: Reference Selection" })
-
-vim.keymap.set("n", "<leader>gi", function()
-  require("kurtis.gemini_custom").insert_gemini_comment()
-end, { desc = "Gemini: Insert Instruction Comment" })
+local term = require('kurtis.terminal')
+-- Terminal Mappings (Independent)
+vim.keymap.set('n', '<leader>tt', term.toggle, { desc = "Toggle Project Terminal" })
+vim.keymap.set('t', '<leader>tt', function()
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes([[<C-\><C-n>]], true, false, true), 'n', true)
+  vim.schedule(term.toggle)
+end, { desc = "Hide Terminal" })
 
 -- Optional: Escape to exit terminal mode easily
 vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]])
+

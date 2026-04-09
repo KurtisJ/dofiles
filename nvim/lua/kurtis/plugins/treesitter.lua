@@ -3,9 +3,9 @@ return {
   build = ":TSUpdate",
   config = function()
     local ts = require("nvim-treesitter")
-    
+
     -- 1. Ensure Dart is in the install list
-    ts.install({ "javascript", "typescript", "tsx", "html", "css", "lua", "dart" })
+    ts.install({ "javascript", "typescript", "tsx", "html", "css", "lua", "dart", "markdown", "markdown_inline" })
 
     -- 2. Wake up Treesitter for Dart files
     vim.api.nvim_create_autocmd("FileType", {

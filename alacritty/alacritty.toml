@@ -5,7 +5,7 @@ hide_when_typing = true
 size = 10.0
 
 [font.normal]
-family = "Monaspace Neon"
+family = "Monaspace Neon NF"
 style = "Regular"
 
 [colors.primary]

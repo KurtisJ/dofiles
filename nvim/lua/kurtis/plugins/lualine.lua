@@ -2,9 +2,11 @@ return {
     "nvim-lualine/lualine.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
+        local catppuccin_lualine = require("catppuccin.utils.lualine")()
+
         require("lualine").setup({
             options = {
-                theme = "eldritch", -- This will automatically sync with your theme
+                theme = catppuccin_lualine,
                 component_separators = { left = "", right = "" },
                 section_separators = { left = "", right = "" },
                 globalstatus = true, -- One single bar at the bottom, even with splits
