@@ -3,8 +3,13 @@ local ai_ns = vim.api.nvim_create_namespace("ai_signs")
 
 local function set_ai_colors()
   vim.api.nvim_set_hl(0, "AiSignGemini", { fg = "#be03fd", bold = true })
-  vim.api.nvim_set_hl(0, "AiSignClaude", { fg = "#f27351", bold = true }) -- Claude Orange-ish
-  vim.api.nvim_set_hl(0, "AiSignCodex", { fg = "#00ffcc", bold = true })  -- Codex Teal
+  vim.api.nvim_set_hl(0, "AiSignClaude", { fg = "#f27351", bold = true })
+  vim.api.nvim_set_hl(0, "AiSignCodex", { fg = "#00ffcc", bold = true })
+  
+  -- Border Highlights
+  vim.api.nvim_set_hl(0, "AiBorderGemini", { fg = "#be03fd" })
+  vim.api.nvim_set_hl(0, "AiBorderClaude", { fg = "#f27351" })
+  vim.api.nvim_set_hl(0, "AiBorderCodex",  { fg = "#00ffcc" })
 end
 
 set_ai_colors()
@@ -23,34 +28,35 @@ local state = {
   }
 }
 
-local function create_floating_window(tool_name)
+local function create_window(tool_name)
   local inst = state.instances[tool_name]
   local stats = vim.api.nvim_list_uis()[1]
 
-  local width = math.floor(stats.width * 0.8)
-  local height = math.floor(stats.height * 0.8)
-  local col = math.floor((stats.width - width) / 2)
-  local row = math.floor((stats.height - height) / 2) - 2
+  -- Maximize dimensions for "fullscreen" feel with a border
+  local width = stats.width - 4
+  local height = stats.height - 4
+  local col = 1
+  local row = 0
 
   if not vim.api.nvim_buf_is_valid(inst.buf) then
     inst.buf = vim.api.nvim_create_buf(false, true)
   end
 
-
   inst.win = vim.api.nvim_open_win(inst.buf, true, {
     relative = "editor",
     width = width,
-
     height = height,
     col = col,
-
     row = row,
     style = "minimal",
     border = "rounded",
-
     title = " " .. tool_name:upper() .. " ",
     title_pos = "center",
   })
+
+  -- Apply the colored border
+  local hl_name = "AiBorder" .. tool_name:sub(1, 1):upper() .. tool_name:sub(2)
+  vim.wo[inst.win].winhighlight = "FloatBorder:" .. hl_name
 
   if vim.bo[inst.buf].buftype ~= "terminal" then
     vim.fn.termopen(inst.cmd)
@@ -77,7 +83,7 @@ function M.toggle(tool)
   else
     -- Otherwise, create it
 
-    create_floating_window(tool)
+    create_window(tool)
   end
 end
 
@@ -110,7 +116,7 @@ function M.send_to(tool)
   end
 
   if not vim.api.nvim_win_is_valid(inst.win) then
-    create_floating_window(tool)
+    create_window(tool)
   end
 
   vim.schedule(function()

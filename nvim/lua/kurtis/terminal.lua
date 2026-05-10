@@ -37,7 +37,7 @@ function M.toggle()
     width = width,
     height = height,
     col = math.floor((stats.width - width) / 2),
-    row = math.floor((stats.height - height) / 2),
+    row = math.floor((stats.height - height) / 2) - 2,
     style = "minimal",
     border = "rounded",
     title = " TERMINAL ",

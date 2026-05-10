@@ -37,6 +37,7 @@ return {
       keymaps = {
         ["<Esc>"] = "actions.close",
         ["q"] = "actions.close", -- 'q' is also a standard way to quit floats
+        ["-"] = false,           -- Disable Oil's '-' mapping to allow Harpoon to work
       },
     })
     -- Force Oil to refresh whenever you focus the window

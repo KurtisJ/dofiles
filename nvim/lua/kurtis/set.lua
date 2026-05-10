@@ -25,6 +25,7 @@ vim.opt.incsearch = true      -- show matches as you type
 vim.opt.signcolumn = "yes" -- always show a sign column
 -- vim.opt.colorcolumn = "100" -- show a column at 100 position chars
 vim.opt.showmatch = true                          -- highlights matching brackets
+vim.opt.showtabline = 0                           -- hide tabline
 vim.opt.cmdheight = 1                             -- single line command line
 vim.opt.completeopt = "menuone,noinsert,noselect" -- completion options
 vim.opt.showmode = false                          -- do not show the mode, instead have it in statusline
