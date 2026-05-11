@@ -68,6 +68,33 @@ return {
               EnableImportCompletion = true,
             },
           }
+        elseif server == "eslint" then
+          config.root_dir = require("lspconfig.util").root_pattern(".eslintrc", ".eslintrc.js", ".eslintrc.json", "package.json", ".git")
+          config.settings = {
+            workingDirectory = { mode = "auto" },
+          }
+          config.on_attach = function(client, bufnr)
+            vim.api.nvim_create_autocmd("BufWritePre", {
+              buffer = bufnr,
+              command = "EslintFixAll",
+            })
+          end
+          config.commands = {
+            EslintFixAll = {
+              function()
+                vim.lsp.buf.execute_command({
+                  command = "eslint.applyAllFixes",
+                  arguments = {
+                    {
+                      uri = vim.uri_from_bufnr(0),
+                      version = vim.lsp.util.get_buf_full_content_version(0),
+                    },
+                  },
+                })
+              end,
+              description = "Fix all eslint problems for this buffer",
+            },
+          }
         end
 
         -- This registers the config and enables it for the filetype

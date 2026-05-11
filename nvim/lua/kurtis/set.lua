@@ -103,36 +103,3 @@ vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "CursorHoldI", "FocusGai
   command = "if mode() != 'c' | checktime | endif",
   pattern = { "*" },
 })
-
--- Add this to your gemini_custom.lua or your keymap file
-local ai = require("kurtis.ai_assist")
-
--- Toggle Windows
-vim.keymap.set('n', '<leader>gg', function() ai.toggle('gemini') end)
-vim.keymap.set('n', '<leader>cc', function() ai.toggle('claude') end)
-vim.keymap.set('n', '<leader>xx', function() ai.toggle('codex') end)
--- These intercept the keys before they reach the CLI prompt
-vim.keymap.set('t', '<leader>gg', function() ai.terminal_toggle('gemini') end)
-vim.keymap.set('t', '<leader>cc', function() ai.terminal_toggle('claude') end)
-vim.keymap.set('t', '<leader>xx', function() ai.terminal_toggle('codex') end)
--- Send Selection/File
-vim.keymap.set({'n', 'v'}, '<leader>sg', function() ai.send_to('gemini') end)
-vim.keymap.set({'n', 'v'}, '<leader>sc', function() ai.send_to('claude') end)
-vim.keymap.set({'n', 'v'}, '<leader>sx', function() ai.send_to('codex') end)
-
--- Insert AI Comments (Normal Mode)
-vim.keymap.set('n', '<leader>ic', function() ai.insert_ai_comment('claude') end, { desc = "Insert Claude Comment" })
-vim.keymap.set('n', '<leader>ig', function() ai.insert_ai_comment('gemini') end, { desc = "Insert Gemini Comment" })
-vim.keymap.set('n', '<leader>ix', function() ai.insert_ai_comment('codex') end,  { desc = "Insert Codex Comment" })
-
-local term = require('kurtis.terminal')
--- Terminal Mappings (Independent)
-vim.keymap.set('n', '<leader>tt', term.toggle, { desc = "Toggle Project Terminal" })
-vim.keymap.set('t', '<leader>tt', function()
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes([[<C-\><C-n>]], true, false, true), 'n', true)
-  vim.schedule(term.toggle)
-end, { desc = "Hide Terminal" })
-
--- Optional: Escape to exit terminal mode easily
-vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]])
-
