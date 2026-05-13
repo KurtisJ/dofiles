@@ -2,18 +2,25 @@ return {
   "nvim-treesitter/nvim-treesitter",
   build = ":TSUpdate",
   config = function()
-    local ts = require("nvim-treesitter")
-
-    -- 1. Ensure Dart is in the install list
-    ts.install({ "javascript", "typescript", "tsx", "html", "css", "lua", "dart", "markdown", "markdown_inline" })
-
-    -- 2. Wake up Treesitter for Dart files
-    vim.api.nvim_create_autocmd("FileType", {
-      -- Added "dart" to the pattern below
-      pattern = { "javascript", "typescript", "typescriptreact", "lua", "dart" },
-      callback = function()
-        vim.treesitter.start()
-      end,
+    -- This version of nvim-treesitter uses .setup() directly on the main module
+    require("nvim-treesitter").setup({
+      -- Fixes "Invalid node type 'tab'" by ensuring we have compatible parsers for Neovim's queries
+      ensure_installed = {
+        "lua",
+        "vim",
+        "vimdoc",
+        "javascript",
+        "typescript",
+        "tsx",
+        "html",
+        "css",
+        "dart",
+        "markdown",
+        "markdown_inline",
+      },
+      highlight = {
+        enable = true,
+      },
     })
   end,
 }
